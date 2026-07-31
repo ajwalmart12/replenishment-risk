@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>RISM Impact Tracker — Demo</title>
+<title>Safety Stock Monitor — Demo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root{--s0:#f9f9f7;--s1:#fcfcfb;--ink:#0b0b0b;--sec:#52514e;--muted:#898781;--grid:#e1e0d9;--border:rgba(11,11,11,.10);--blue:#6366f1;--orange:#eb6834;--aqua:#1baf7a;--yellow:#eda100;--good:#0ca30c;--warn:#fab219;--crit:#d03b3b;}
@@ -38,15 +38,15 @@ footer a{color:var(--ind);text-decoration:none;} footer a:hover{text-decoration:
 <div class="demo-banner">⚠ DEMO DATA — Illustrative numbers only. Production: replenishment risk monitoring across 4,500+ stores.</div>
 <header class="topbar">
   <div>
-    <div class="brand">RISM Impact Tracker</div>
-    <div class="sub">Replenishment Item Safety Margin — Risk Monitoring</div>
+    <div class="brand">Safety Stock Monitor</div>
+    <div class="sub">Replenishment Safety Stock — Risk Monitoring</div>
   </div>
   <a href="../whitepaper.html" class="back-link">← Portfolio</a>
 </header>
 <main>
   <div class="kpi-row">
     <div class="kpi bl"><div class="lbl">Items Monitored</div><div class="val">2,400</div><div class="delta" style="color:var(--muted)">This week</div></div>
-    <div class="kpi or"><div class="lbl">RISM Violations</div><div class="val">142</div><div class="delta" style="color:var(--crit)">▼ 5.9% vs. LW</div></div>
+    <div class="kpi or"><div class="lbl">Safety Stock Violations</div><div class="val">142</div><div class="delta" style="color:var(--crit)">▼ 5.9% vs. LW</div></div>
     <div class="kpi or"><div class="lbl">Avg Safety Stock Gap</div><div class="val">−8.4%</div><div class="delta" style="color:var(--warn)">Below target</div></div>
     <div class="kpi gd"><div class="lbl">Replen Coverage</div><div class="val">91.2%</div><div class="delta" style="color:var(--good)">▲ 2.1pp LW</div></div>
     <div class="kpi gd"><div class="lbl">Recovery Rate</div><div class="val">78.3%</div><div class="delta" style="color:var(--good)">Items back in-range</div></div>
@@ -54,13 +54,13 @@ footer a{color:var(--ind);text-decoration:none;} footer a:hover{text-decoration:
 
   <div class="chart-grid cols2" style="margin-bottom:16px">
     <div class="card">
-      <div class="ttl">RISM Violations — Weekly Trend</div>
+      <div class="ttl">Safety Stock Violations — Weekly Trend</div>
       <div class="sub2">Items below minimum safety stock threshold by week</div>
       <canvas id="rismTrend" height="200"></canvas>
     </div>
     <div class="card">
       <div class="ttl">Violation Depth Distribution — Current Week</div>
-      <div class="sub2">% below RISM floor by severity band</div>
+      <div class="sub2">% below safety stock threshold by severity band</div>
       <canvas id="depthDist" height="200"></canvas>
     </div>
   </div>
