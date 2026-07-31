@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RISM Impact Tracker — Demo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{--s0:#f9f9f7;--s1:#fcfcfb;--ink:#0b0b0b;--sec:#52514e;--muted:#898781;--grid:#e1e0d9;--border:rgba(11,11,11,.10);--blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--yellow:#eda100;--good:#0ca30c;--warn:#fab219;--crit:#d03b3b;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:13px;background:var(--s0);color:var(--ink);}
+.demo-banner{background:#fffbeb;border-bottom:2px solid #f59e0b;padding:8px 20px;font-size:12px;font-weight:600;color:#92400e;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;}
+.brand{font-size:15px;font-weight:700;} .sub{font-size:11px;color:var(--sec);}
+.back-link{margin-left:auto;color:var(--blue);font-size:12px;font-weight:600;text-decoration:none;}
+.back-link:hover{text-decoration:underline;}
+main{padding:20px;max-width:1200px;margin:0 auto;}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
+.kpi .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.kpi .val{font-size:22px;font-weight:700;margin:4px 0 2px;}
+.kpi .delta{font-size:11px;font-weight:600;}
+.kpi.bl{border-left:3px solid var(--blue);} .kpi.or{border-left:3px solid var(--orange);} .kpi.gd{border-left:3px solid var(--good);}
+.chart-grid{display:grid;gap:16px;}
+.cols2{grid-template-columns:1fr 1fr;}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.card .ttl{font-size:12px;font-weight:700;margin-bottom:3px;}
+.card .sub2{font-size:11px;color:var(--muted);margin-bottom:12px;}
+canvas{display:block;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--grid);}
+td{padding:7px 10px;border-bottom:1px solid var(--grid);color:var(--sec);}
+tr:last-child td{border-bottom:none;} tr:hover td{background:#f4f3f0;}
+footer{margin-top:32px;padding:16px 20px;border-top:1px solid var(--grid);font-size:11px;color:var(--muted);display:flex;gap:16px;}
+footer a{color:var(--blue);text-decoration:none;} footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="demo-banner">⚠ DEMO DATA — Illustrative numbers only. Production: replenishment risk monitoring across 4,500+ stores.</div>
+<header class="topbar">
+  <div>
+    <div class="brand">RISM Impact Tracker</div>
+    <div class="sub">Replenishment Item Safety Margin — Risk Monitoring</div>
+  </div>
+  <a href="../whitepaper.html" class="back-link">← Portfolio</a>
+</header>
+<main>
+  <div class="kpi-row">
+    <div class="kpi bl"><div class="lbl">Items Monitored</div><div class="val">2,400</div><div class="delta" style="color:var(--muted)">This week</div></div>
+    <div class="kpi or"><div class="lbl">RISM Violations</div><div class="val">142</div><div class="delta" style="color:var(--crit)">▼ 5.9% vs. LW</div></div>
+    <div class="kpi or"><div class="lbl">Avg Safety Stock Gap</div><div class="val">−8.4%</div><div class="delta" style="color:var(--warn)">Below target</div></div>
+    <div class="kpi gd"><div class="lbl">Replen Coverage</div><div class="val">91.2%</div><div class="delta" style="color:var(--good)">▲ 2.1pp LW</div></div>
+    <div class="kpi gd"><div class="lbl">Recovery Rate</div><div class="val">78.3%</div><div class="delta" style="color:var(--good)">Items back in-range</div></div>
+  </div>
+
+  <div class="chart-grid cols2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="ttl">RISM Violations — Weekly Trend</div>
+      <div class="sub2">Items below minimum safety stock threshold by week</div>
+      <canvas id="rismTrend" height="200"></canvas>
+    </div>
+    <div class="card">
+      <div class="ttl">Violation Depth Distribution — Current Week</div>
+      <div class="sub2">% below RISM floor by severity band</div>
+      <canvas id="depthDist" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ttl">Top Replenishment Risk Items — Current Week</div>
+    <div class="sub2">Sorted by safety stock gap. Items requiring immediate planner action.</div>
+    <table>
+      <thead><tr><th>SKU</th><th>Description</th><th>Dept</th><th>Safety Stock Gap</th><th>On-Hand Days</th><th>Risk</th></tr></thead>
+      <tbody id="rismTable"></tbody>
+    </table>
+  </div>
+</main>
+<footer>
+  <span>⚠ Demo data</span>
+  <a href="../../whitepaper.html" target="_blank">📄 Methodology →</a>
+  <span style="margin-left:auto">Astha Jain · <a href="https://linkedin.com/in/ajwalmart12" target="_blank">LinkedIn</a></span>
+</footer>
+<script>
+const C={blue:'#2a78d6',orange:'#eb6834',aqua:'#1baf7a',warn:'#fab219',crit:'#d03b3b',good:'#0ca30c',grid:'#e1e0d9',muted:'#898781'};
+const WKS=["Wk 1","Wk 2","Wk 3","Wk 4","Wk 5","Wk 6","Wk 7","Wk 8","Wk 9","Wk 10","Wk 11","Wk 12"];
+const base={responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:C.grid,borderWidth:1,titleColor:'#0b0b0b',bodyColor:C.muted,padding:10}},scales:{x:{grid:{color:C.grid,lineWidth:.5},ticks:{color:C.muted,font:{size:11}}},y:{grid:{color:C.grid,lineWidth:.5},ticks:{color:C.muted,font:{size:11}},border:{dash:[3,3]}}}};
+
+new Chart(document.getElementById('rismTrend'),{type:'line',data:{labels:WKS,datasets:[
+  {label:'Violations',data:[198,184,172,163,158,151,148,145,142,140,142,null],borderColor:C.orange,backgroundColor:C.orange+'22',fill:true,borderWidth:2,pointRadius:3,tension:.3,spanGaps:false},
+  {label:'Recovered',data:[44, 52, 61, 69,  74, 80, 86, 89, 94, 96, 98, null],borderColor:C.good, backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:.3,spanGaps:false,borderDash:[4,3]},
+]},options:{...base,plugins:{...base.plugins,legend:{display:true,labels:{font:{size:11},color:'#52514e',boxWidth:8,padding:8}}},scales:{x:base.scales.x,y:{...base.scales.y,title:{display:true,text:'# Items',font:{size:11},color:C.muted}}}}});
+
+new Chart(document.getElementById('depthDist'),{type:'bar',data:{labels:['<5% below','5–15% below','15–30% below','>30% below'],datasets:[{data:[38,52,31,21],backgroundColor:[C.warn,C.orange,C.crit,C.crit+'99'],borderRadius:4,borderSkipped:false}]},options:{...base,indexAxis:'y',scales:{x:{...base.scales.x,title:{display:true,text:'# Items',font:{size:11},color:C.muted}},y:base.scales.y}}});
+
+const rows=[
+  {sku:'SKU-44302',desc:'Premium Ground Beef 3lb',dept:'Fresh Meat',gap:'-38.2%',doh:'1.8',risk:'critical'},
+  {sku:'SKU-12891',desc:'Organic Tortilla Chips 10oz',dept:'Snacks',gap:'-31.4%',doh:'2.1',risk:'critical'},
+  {sku:'SKU-51204',desc:'Baby Formula Stage 2 32oz',dept:'Baby',gap:'-24.8%',doh:'2.6',risk:'critical'},
+  {sku:'SKU-29871',desc:'Sparkling Water Variety 24pk',dept:'Beverages',gap:'-19.3%',doh:'3.4',risk:'warning'},
+  {sku:'SKU-18293',desc:'Oat Milk Original 64oz',dept:'Dairy Alt',gap:'-15.1%',doh:'4.2',risk:'warning'},
+  {sku:'SKU-33180',desc:'Rotisserie Chicken Seasoning',dept:'Spices',gap:'-12.6%',doh:'4.9',risk:'warning'},
+  {sku:'SKU-92104',desc:'Frozen Breakfast Sandwich 8pk',dept:'Frozen',gap:'-9.4%',doh:'5.8',risk:'warning'},
+  {sku:'SKU-67831',desc:'Canned Diced Tomatoes 28oz',dept:'Grocery',gap:'-5.8%',doh:'6.4',risk:'low'},
+];
+const tb=document.getElementById('rismTable');
+const rc={critical:`background:#fee2e2;color:${C.crit}`,warning:`background:#fef9c3;color:#92400e`,low:`background:#dcfce7;color:#166534`};
+rows.forEach(r=>{tb.innerHTML+=`<tr><td style="font-family:monospace;font-size:11px">${r.sku}</td><td>${r.desc}</td><td>${r.dept}</td><td style="font-weight:700;color:${r.risk==='critical'?C.crit:r.risk==='warning'?C.warn:C.good}">${r.gap}</td><td>${r.doh} days</td><td><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;${rc[r.risk]}">${r.risk}</span></td></tr>`;});
+</script>
+</body>
+</html>
